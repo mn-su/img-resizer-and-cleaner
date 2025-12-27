@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+
+# Mac
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Çıktı Klasörleri (İsteğe bağlı, çıktıların depoya yüklenmemesi için)
+*_resize/
+
+# Test Verileri
+TokiEvFoto/
