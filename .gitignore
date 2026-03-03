@@ -15,8 +15,13 @@ venv/
 .vscode/
 .idea/
 
-# Çıktı Klasörleri (İsteğe bağlı, çıktıların depoya yüklenmemesi için)
+# Çıktı Klasörleri
 *_resize/
 
+# PyInstaller Build Artifacts
+build/
+dist/
+*.spec
+
 # Test Verileri
-TokiEvFoto/
+Foto/
