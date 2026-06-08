@@ -12,7 +12,7 @@ import sys
 # Desteklenen uzantılar
 SUPPORTED_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.webp', '.bmp'}
 
-def process_images(directory, target_width, quality=85):
+def process_images(directory, target_width, quality=85, to_webp=False):
     """
     Verilen dizindeki resimleri yeniden boyutlandırır, temizler ve yeni bir klasöre kaydeder.
     """
@@ -46,7 +46,10 @@ def process_images(directory, target_width, quality=85):
     
     for filename in image_files:
         input_path = os.path.join(directory, filename)
-        output_path = os.path.join(output_dir, filename)
+        
+        filename_without_ext, _ = os.path.splitext(filename)
+        output_filename = f"{filename_without_ext}.webp" if to_webp else filename
+        output_path = os.path.join(output_dir, output_filename)
         
         try:
             with Image.open(input_path) as img:
@@ -64,12 +67,19 @@ def process_images(directory, target_width, quality=85):
                     elif ext == '.png': img_format = 'PNG'
                     elif ext == '.webp': img_format = 'WEBP'
                 
+                if to_webp:
+                    img_format = 'WEBP'
+                
                 if img_format == 'JPEG':
                     save_kwargs['quality'] = quality
                     if resized_img.mode in ("RGBA", "P"):
                         resized_img = resized_img.convert("RGB")
                 elif img_format == 'WEBP':
                     save_kwargs['quality'] = quality
+                    if resized_img.mode == "P":
+                        resized_img = resized_img.convert("RGBA")
+                    elif resized_img.mode == "CMYK":
+                        resized_img = resized_img.convert("RGB")
                 
                 resized_img.save(output_path, format=img_format, **save_kwargs)
                 
@@ -98,6 +108,7 @@ if __name__ == "__main__":
     parser.add_argument("--path", required=True, help="Klasör yolu")
     parser.add_argument("--width", type=int, required=True, help="Hedef genişlik (px)")
     parser.add_argument("--quality", type=int, default=85, help="Kalite (1-100)")
+    parser.add_argument("--to-webp", action="store_true", help="Görselleri WebP formatına dönüştür")
     
     args = parser.parse_args()
-    process_images(args.path, args.width, args.quality)
+    process_images(args.path, args.width, args.quality, args.to_webp)

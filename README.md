@@ -13,6 +13,7 @@ Programı kurmadan doğrudan kullanmak için:
 - **Gelişmiş Arayüz (Pro):** Modern, karanlık mod destekli Windows arayüzü (`main.py`).
 - **Hafif Sürüm (Lite):** Hiçbir kütüphane bağımlılığı gerektirmeyen (sadece Pillow), terminal odaklı sade sürüm (`lite.py`).
 - **Toplu İşlem:** Bir klasördeki tüm JPG, PNG, WEBP ve BMP dosyalarını işler.
+- **WebP Dönüşümü:** Görselleri web sitelerinde hızlı yüklenmeleri için optimize edilmiş WebP formatına toplu olarak dönüştürme seçeneği.
 - **Akıllı Boyutlandırma:** Verilen genişlik değerine göre en-boy oranını koruyarak yeniden boyutlandırır.
 - **Gizlilik Odaklı:** Fotoğraflardaki EXIF ve metadata (konum, kamera bilgisi vb.) verilerini tamamen siler.
 - **Optimizasyon:** Görselleri optimize ederek dosya boyutunu minimuma indirir.
@@ -59,9 +60,9 @@ python lite.py --path "/Resimlerin/Oldugu/Klasor" --width 1024
 
 *Bu komut, belirtilen klasördeki resimleri 1024px genişliğe ayarlar.*
 
-**Kalite Ayarı ile Kullanım (Opsiyonel):**
+**Kalite Ayarı ve WebP Dönüşümü ile Kullanım (Opsiyonel):**
 ```bash
-python main.py --path "/Resimlerin/Oldugu/Klasor" --width 1920 --quality 90
+python main.py --path "/Resimlerin/Oldugu/Klasor" --width 1920 --quality 90 --to-webp
 ```
 *Varsayılan kalite: 85*
 
@@ -70,6 +71,7 @@ python main.py --path "/Resimlerin/Oldugu/Klasor" --width 1920 --quality 90
 - `--path`: İşlenecek resimlerin bulunduğu klasörün tam yolu (Zorunlu).
 - `--width`: Hedef genişlik değeri piksel cinsinden (Zorunlu).
 - `--quality`: JPG ve WEBP için sıkıştırma kalitesi. 1-100 arası değer. (Varsayılan: 85).
+- `--to-webp`: Görselleri WebP formatına dönüştürme seçeneği (Opsiyonel).
 
 ## Lisans
 

@@ -15,7 +15,7 @@ from tkinter import filedialog
 # Desteklenen uzantılar
 SUPPORTED_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.webp', '.bmp'}
 
-def process_images(directory, target_width, quality=85, log_callback=print, progress_callback=None):
+def process_images(directory, target_width, quality=85, to_webp=False, log_callback=print, progress_callback=None):
     """
     Verilen dizindeki resimleri yeniden boyutlandırır, temizler ve yeni bir klasöre kaydeder.
     """
@@ -52,7 +52,10 @@ def process_images(directory, target_width, quality=85, log_callback=print, prog
     
     for i, filename in enumerate(image_files):
         input_path = os.path.join(directory, filename)
-        output_path = os.path.join(output_dir, filename)
+        
+        filename_without_ext, _ = os.path.splitext(filename)
+        output_filename = f"{filename_without_ext}.webp" if to_webp else filename
+        output_path = os.path.join(output_dir, output_filename)
         
         try:
             with Image.open(input_path) as img:
@@ -73,12 +76,19 @@ def process_images(directory, target_width, quality=85, log_callback=print, prog
                     elif ext == '.png': img_format = 'PNG'
                     elif ext == '.webp': img_format = 'WEBP'
                 
+                if to_webp:
+                    img_format = 'WEBP'
+                
                 if img_format == 'JPEG':
                     save_kwargs['quality'] = quality
                     if resized_img.mode in ("RGBA", "P"):
                         resized_img = resized_img.convert("RGB")
                 elif img_format == 'WEBP':
                     save_kwargs['quality'] = quality
+                    if resized_img.mode == "P":
+                        resized_img = resized_img.convert("RGBA")
+                    elif resized_img.mode == "CMYK":
+                        resized_img = resized_img.convert("RGB")
                 
                 resized_img.save(output_path, format=img_format, **save_kwargs)
                 
@@ -174,6 +184,11 @@ class App(ctk.CTk):
         self.quality_slider.set(85)
         self.quality_slider.grid(row=1, column=0, pady=(5, 0), sticky="ew")
 
+        # WebP Format Option
+        self.webp_var = ctk.BooleanVar(value=False)
+        self.webp_checkbox = ctk.CTkCheckBox(self.settings_frame, text="Görselleri WebP formatına dönüştür", variable=self.webp_var)
+        self.webp_checkbox.grid(row=1, column=0, columnspan=2, padx=20, pady=(10, 10), sticky="w")
+
         # Progress Bar
         self.progress_bar = ctk.CTkProgressBar(self)
         self.progress_bar.grid(row=3, column=0, padx=20, pady=10, sticky="ew")
@@ -235,12 +250,13 @@ class App(ctk.CTk):
         self.progress_bar.set(0)
         
         quality = int(self.quality_slider.get())
+        to_webp = self.webp_var.get()
 
-        thread = threading.Thread(target=self.run_process, args=(path, width, quality))
+        thread = threading.Thread(target=self.run_process, args=(path, width, quality, to_webp))
         thread.start()
 
-    def run_process(self, path, width, quality):
-        success = process_images(path, width, quality, log_callback=self.log, progress_callback=self.update_progress)
+    def run_process(self, path, width, quality, to_webp):
+        success = process_images(path, width, quality, to_webp=to_webp, log_callback=self.log, progress_callback=self.update_progress)
         self.start_button.configure(state="normal")
 
 def main():
@@ -248,11 +264,12 @@ def main():
     parser.add_argument("--path", help="İşlenecek resimlerin bulunduğu klasör yolu")
     parser.add_argument("--width", type=int, help="Hedef genişlik değeri (px)")
     parser.add_argument("--quality", type=int, default=85, help="JPG/WEBP Kalitesi (0-100, Varsayılan: 85)")
+    parser.add_argument("--to-webp", action="store_true", help="Görselleri WebP formatına dönüştür")
     
     args = parser.parse_args()
     
     if args.path and args.width:
-        process_images(args.path, args.width, args.quality)
+        process_images(args.path, args.width, args.quality, args.to_webp)
     else:
         # Launch GUI
         app = App()
