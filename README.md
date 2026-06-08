@@ -5,7 +5,7 @@ Belirtilen bir dizindeki görselleri toplu olarak yeniden boyutlandıran, EXIF v
 ## 🚀 Hızlı Başlat (EXE)
 
 Programı kurmadan doğrudan kullanmak için:
-**[Görsel Boyutlandırıcıyı İndir (v1.0.0)](https://github.com/mn-su/img-resizer-and-cleaner/releases/download/v1.0.0/img-resizer.exe)**
+**[Görsel Boyutlandırıcıyı İndir (v1.1.0)](https://github.com/mn-su/img-resizer-and-cleaner/releases/download/v1.1.0/img-resizer-v1.1.0.exe)**
 
 
 ## Özellikler
